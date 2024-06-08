@@ -264,10 +264,51 @@ print(minSubArrayLen(target, nums))  # Output: 2
 #### Merge Sorted Array
 
 ```
+def merge(nums1, m, nums2, n):
+    # Pointers for nums1 and nums2
+    p1 = m - 1
+    p2 = n - 1
+    # Pointer for the last position of merged array
+    p = m + n - 1
 
+    # While there are elements to be checked in nums2
+    while p1 >= 0 and p2 >= 0:
+        if nums1[p1] > nums2[p2]:
+            nums1[p] = nums1[p1]
+            p1 -= 1
+        else:
+            nums1[p] = nums2[p2]
+            p2 -= 1
+        p -= 1
+
+    # If there are still elements in nums2, place them in nums1
+    # No need to check for nums1 since they are already in place
+    nums1[:p2 + 1] = nums2[:p2 + 1]
+
+# Example usage:
+nums1 = [1, 2, 3, 0, 0, 0]
+m = 3
+nums2 = [2, 5, 6]
+n = 3
+merge(nums1, m, nums2, n)
+print(nums1)  # Output: [1, 2, 2, 3, 5, 6]
 
 ```
 
+
+### Approach
+
+1. Use three pointers to manage the merging process:
+   - `p1` pointing to the last element of the actual elements in `nums1` (i.e., `m-1`).
+   - `p2` pointing to the last element of `nums2` (i.e., `n-1`).
+   - `p` pointing to the last position of `nums1` (i.e., `m+n-1`).
+
+2. Iterate from the back of `nums1` and `nums2` and fill `nums1` from the back:
+   - Compare the elements pointed by `p1` and `p2`.
+   - Place the larger element at the position `p` and move the respective pointer (`p1` or `p2`) backward.
+   - Move the `p` pointer backward.
+   
+3. If there are remaining elements in `nums2`, fill them in `nums1`.
 
 
 
