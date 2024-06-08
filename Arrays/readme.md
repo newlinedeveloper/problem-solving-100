@@ -1,34 +1,47 @@
 ## Arrays
 
-#### Product of Array Except Self
+### Product of Array Except Self
 ```
 
 
 ```
 
 
-#### Move Zeroes
+### Move Zeroes
+```
 
 
-#### Best Time to Buy and Sell Stock
+```
+
+### Best Time to Buy and Sell Stock
+```
+
+```
+
+
+### Next Permutation
+```
+
+
+```
+
+### Two Sum
+```
+
+
+```
+
+### Container With Most Water
+```
+
+```
+
+
+### Sort Colors
 
 
 
-#### Next Permutation
-
-
-#### Two Sum
-
-
-#### Container With Most Water
-
-
-
-#### Sort Colors
-
-
-
-#### Minimum Size Subarray Sum
+### Minimum Size Subarray Sum
 
 ```
 
