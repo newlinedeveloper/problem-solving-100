@@ -109,75 +109,88 @@ import (
 	"math"
 )
 
-// minWindow finds the minimum window in s which will contain all the characters in t
+Input: string s, string t
+Output: smallest substring in s containing all characters of t
+
+1. Initialize:
+   - Frequency map `tCount` for characters in t.
+   - A frequency map `windowCount` for the current window in s.
+   - Two pointers: `start` and `end` for sliding window.
+   - Variables to track minimum window length and its starting index.
+
+2. Expand the window by moving `end`:
+   - Add the character at `end` to `windowCount`.
+   - Check if the current window contains all characters in t.
+
+3. Once a valid window is found:
+   - Try to shrink the window by moving `start`.
+   - Update the minimum window length and starting index if a smaller valid window is found.
+   - Remove characters from `windowCount` as `start` moves.
+
+4. Repeat steps 2-3 until `end` reaches the end of s.
+
+5. Return the substring based on the minimum window length.
+
+
 func minWindow(s string, t string) string {
-	if len(s) == 0 || len(t) == 0 {
-		return ""
-	}
+    if len(s) < len(t) {
+        return ""
+    }
 
-	// Dictionary which keeps a count of all the unique characters in t.
-	dictT := make(map[rune]int)
-	for _, c := range t {
-		dictT[c]++
-	}
+    // Frequency map for characters in t
+    tCount := make(map[byte]int)
+    for i := 0; i < len(t); i++ {
+        tCount[t[i]]++
+    }
 
-	// Number of unique characters in t, which need to be present in the desired window.
-	required := len(dictT)
+    // Variables for sliding window
+    windowCount := make(map[byte]int)
+    required := len(tCount)
+    formed := 0
 
-	// Left and Right pointer
-	l, r := 0, 0
+    left, right := 0, 0
+    minLength := len(s) + 1
+    startIndex := 0
 
-	// Formed is used to keep track of how many unique characters in t
-	// are present in the current window in its desired frequency.
-	// e.g. if t is "AABC" then the window must have two A's, one B and one C.
-	// Thus formed would be = 3 when all these conditions are met.
-	formed := 0
+    // Sliding window
+    for right < len(s) {
+        char := s[right]
+        windowCount[char]++
 
-	// Dictionary which keeps a count of all the unique characters in the current window.
-	windowCounts := make(map[rune]int)
+        // Check if current character contributes to a valid window
+        if tCount[char] > 0 && windowCount[char] == tCount[char] {
+            formed++
+        }
 
-	// ans list of the form (window length, left, right)
-	ans := []int{-1, 0, 0}
+        // Try to shrink the window
+        for left <= right && formed == required {
+            char = s[left]
 
-	for r < len(s) {
-		// Add one character from the right to the window
-		c := rune(s[r])
-		windowCounts[c]++
-		// If the frequency of the current character added equals to the
-		// desired count in t then increment the formed count by 1.
-		if count, ok := dictT[c]; ok && windowCounts[c] == count {
-			formed++
-		}
+            // Update the result if this window is smaller
+            if right-left+1 < minLength {
+                minLength = right - left + 1
+                startIndex = left
+            }
 
-		// Try and contract the window till the point where it ceases to be 'desirable'.
-		for l <= r && formed == required {
-			c = rune(s[l])
-			// Save the smallest window until now.
-			if ans[0] == -1 || r-l+1 < ans[0] {
-				ans[0] = r - l + 1
-				ans[1] = l
-				ans[2] = r
-			}
+            // Remove the leftmost character from the window
+            windowCount[char]--
+            if tCount[char] > 0 && windowCount[char] < tCount[char] {
+                formed--
+            }
+            left++
+        }
 
-			// The character at the position pointed by the `Left` pointer is no longer a part of the window.
-			windowCounts[c]--
-			if count, ok := dictT[c]; ok && windowCounts[c] < count {
-				formed--
-			}
+        right++
+    }
 
-			// Move the left pointer ahead, this would help to look for a new window.
-			l++
-		}
+    // If no valid window was found
+    if minLength > len(s) {
+        return ""
+    }
 
-		// Keep expanding the window once we are done contracting.
-		r++
-	}
-
-	if ans[0] == -1 {
-		return ""
-	}
-	return s[ans[1] : ans[2]+1]
+    return s[startIndex : startIndex+minLength]
 }
+
 
 func main() {
 	s := "ADOBECODEBANC"
