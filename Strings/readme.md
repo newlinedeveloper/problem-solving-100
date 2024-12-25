@@ -42,55 +42,53 @@ import (
 	"fmt"
 )
 
-// isAnagram compares two maps and returns true if they have the same character counts.
-func isAnagram(countP, countS map[rune]int) bool {
-	for k, v := range countP {
-		if countS[k] != v {
-			return false
-		}
-	}
-	return true
-}
-
-// findAnagrams finds all start indices of p's anagrams in s.
 func findAnagrams(s string, p string) []int {
-	var results []int
-	lenS, lenP := len(s), len(p)
+    result := []int{}
+    targetCount := make(map[byte]int)
+    windowCount := make(map[byte]int)
 
-	// Edge case: if p is longer than s, there can't be an anagram.
-	if lenS < lenP {
-		return results
-	}
+    // Populate targetCount with frequency of characters in p
+    for i := 0; i < len(p); i++ {
+        targetCount[p[i]]++
+    }
+    
+    windowSize := len(p)
 
-	countP := make(map[rune]int)
-	countS := make(map[rune]int)
+    for i := 0; i < len(s); i++ {
+        // Add current character to windowCount
+        windowCount[s[i]]++
+        
+        // Remove the leftmost character if window exceeds size
+        if i >= windowSize {
+            if windowCount[s[i-windowSize]] == 1 {
+                delete(windowCount, s[i-windowSize])
+            } else {
+                windowCount[s[i-windowSize]]--
+            }
+        }
 
-	// Initialize the character counts for p and the first window of s.
-	for _, ch := range p {
-		countP[ch]++
-	}
-	for _, ch := range s[:lenP] {
-		countS[ch]++
-	}
+        // Compare targetCount and windowCount
+        if equalMaps(targetCount, windowCount) {
+            result = append(result, i-windowSize+1)
+        }
+    }
 
-	// Slide the window over s one character at a time
-	for i := 0; i <= lenS-lenP; i++ {
-		// If at the start index the character counts match, it's an anagram.
-		if isAnagram(countP, countS) {
-			results = append(results, i)
-		}
-
-		// Slide the window: remove the leftmost character count and add the next one.
-		if i+lenP < lenS {
-			countS[rune(s[i])]--
-			if countS[rune(s[i])] == 0 {
-				delete(countS, rune(s[i]))
-			}
-			countS[rune(s[i+lenP])]++
-		}
-	}
-	return results
+    return result
 }
+
+// Helper function to compare two maps
+func equalMaps(a, b map[byte]int) bool {
+    if len(a) != len(b) {
+        return false
+    }
+    for k, v := range a {
+        if b[k] != v {
+            return false
+        }
+    }
+    return true
+}
+
 
 func main() {
 	s := "cbaebabacd"
