@@ -398,6 +398,52 @@ func main() {
 
 ### Roman to Integer
 
+```
+package main
+
+import (
+    "fmt"
+)
+
+func romanToInt(s string) int {
+    // Map to store Roman numerals and their corresponding values
+    romanMap := map[byte]int{
+        'I': 1,
+        'V': 5,
+        'X': 10,
+        'L': 50,
+        'C': 100,
+        'D': 500,
+        'M': 1000,
+    }
+
+    // Initialize total and length of string
+    total := 0
+    n := len(s)
+
+    for i := 0; i < n; i++ {
+        // Check if the current character is less than the next character
+        if i < n-1 && romanMap[s[i]] < romanMap[s[i+1]] {
+            total -= romanMap[s[i]]
+        } else {
+            total += romanMap[s[i]]
+        }
+    }
+
+    return total
+}
+
+func main() {
+    // Test cases
+    fmt.Println(romanToInt("III"))    // Output: 3
+    fmt.Println(romanToInt("IV"))     // Output: 4
+    fmt.Println(romanToInt("IX"))     // Output: 9
+    fmt.Println(romanToInt("LVIII"))  // Output: 58
+    fmt.Println(romanToInt("MCMXCIV")) // Output: 1994
+}
+
+
+```
 
 ### Sort Characters By Frequency
 
