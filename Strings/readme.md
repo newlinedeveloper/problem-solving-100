@@ -345,6 +345,56 @@ This solution efficiently calculates the length of the longest valid substring u
 
 ### Group Anagrams
 
+```
+package main
+
+import (
+	"fmt"
+	"sort"
+	"strings"
+)
+
+func groupAnagrams(strs []string) [][]string {
+	// Hash map to group anagrams
+	anagrams := make(map[string][]string)
+
+	for _, str := range strs {
+		// Sort the string to use as a key
+		key := sortString(str)
+		anagrams[key] = append(anagrams[key], str)
+	}
+
+	// Collect the grouped anagrams
+	result := [][]string{}
+	for _, group := range anagrams {
+		result = append(result, group)
+	}
+
+	return result
+}
+
+// Helper function to sort a string
+func sortString(s string) string {
+	chars := strings.Split(s, "")
+	sort.Strings(chars)
+	return strings.Join(chars, "")
+}
+
+func main() {
+	// Test cases
+	input := []string{"eat", "tea", "tan", "ate", "nat", "bat"}
+	fmt.Println(groupAnagrams(input)) // Output: [["eat" "tea" "ate"] ["tan" "nat"] ["bat"]]
+
+	input2 := []string{"a"}
+	fmt.Println(groupAnagrams(input2)) // Output: [["a"]]
+
+	input3 := []string{"", ""}
+	fmt.Println(groupAnagrams(input3)) // Output: [["" ""]]
+}
+
+
+```
+
 
 ### Roman to Integer
 
