@@ -522,4 +522,196 @@ def reverseKGroup(head, k):
     return head
 ```
 ---
+### 9. **Palindrome Linked List**
 
+#### Problem
+Determine if a linked list is a palindrome.
+
+#### Pseudocode
+```
+function isPalindrome(head):
+    find the middle of the list
+    reverse the second half
+    compare the first and second halves
+    restore the list (optional)
+    return true if palindrome, otherwise false
+```
+
+#### Golang Solution
+```go
+func isPalindrome(head *ListNode) bool {
+    if head == nil || head.Next == nil {
+        return true
+    }
+
+    // Step 1: Find the middle
+    slow, fast := head, head
+    for fast != nil && fast.Next != nil {
+        slow = slow.Next
+        fast = fast.Next.Next
+    }
+
+    // Step 2: Reverse the second half
+    var prev *ListNode
+    curr := slow
+    for curr != nil {
+        nextTemp := curr.Next
+        curr.Next = prev
+        prev = curr
+        curr = nextTemp
+    }
+
+    // Step 3: Compare both halves
+    first, second := head, prev
+    for second != nil {
+        if first.Val != second.Val {
+            return false
+        }
+        first = first.Next
+        second = second.Next
+    }
+    return true
+}
+
+func main() {
+    head := &ListNode{1, &ListNode{2, &ListNode{2, &ListNode{1, nil}}}}
+    fmt.Println(isPalindrome(head)) // Output: true
+
+    head2 := &ListNode{1, &ListNode{2, &ListNode{3, nil}}}
+    fmt.Println(isPalindrome(head2)) // Output: false
+}
+```
+
+#### Python Solution
+```python
+def isPalindrome(head):
+    if not head or not head.next:
+        return True
+
+    # Step 1: Find the middle
+    slow, fast = head, head
+    while fast and fast.next:
+        slow = slow.next
+        fast = fast.next.next
+
+    # Step 2: Reverse the second half
+    prev, curr = None, slow
+    while curr:
+        next_temp = curr.next
+        curr.next = prev
+        prev = curr
+        curr = next_temp
+
+    # Step 3: Compare both halves
+    first, second = head, prev
+    while second:
+        if first.val != second.val:
+            return False
+        first, second = first.next, second.next
+
+    return True
+
+# Input: [1, 2, 2, 1]
+# Output: True
+head = ListNode(1, ListNode(2, ListNode(2, ListNode(1, None))))
+print(isPalindrome(head))  # Output: True
+
+# Input: [1, 2, 3]
+# Output: False
+head2 = ListNode(1, ListNode(2, ListNode(3, None)))
+print(isPalindrome(head2))  # Output: False
+```
+
+---
+
+### 10. **Flatten Binary Tree to Linked List**
+
+#### Problem
+Flatten a binary tree to a "linked list" in place.
+
+#### Pseudocode
+```
+function flatten(root):
+    if root is null:
+        return
+    flatten the right subtree
+    flatten the left subtree
+    attach the left subtree to the right
+    set the left child to null
+```
+
+#### Golang Solution
+```go
+func flatten(root *TreeNode) {
+    if root == nil {
+        return
+    }
+
+    flatten(root.Right)
+    flatten(root.Left)
+
+    tempRight := root.Right
+    root.Right = root.Left
+    root.Left = nil
+
+    curr := root
+    for curr.Right != nil {
+        curr = curr.Right
+    }
+    curr.Right = tempRight
+}
+
+func main() {
+    root := &TreeNode{1, 
+        &TreeNode{2, &TreeNode{3, nil, nil}, &TreeNode{4, nil, nil}}, 
+        &TreeNode{5, nil, &TreeNode{6, nil, nil}}}
+    flatten(root)
+
+    // Output: 1 -> 2 -> 3 -> 4 -> 5 -> 6
+    for root != nil {
+        fmt.Print(root.Val, " -> ")
+        root = root.Right
+    }
+    fmt.Println("nil") // Output: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> nil
+}
+```
+
+#### Python Solution
+```python
+def flatten(root):
+    if not root:
+        return
+
+    flatten(root.right)
+    flatten(root.left)
+
+    temp_right = root.right
+    root.right = root.left
+    root.left = None
+
+    curr = root
+    while curr.right:
+        curr = curr.right
+    curr.right = temp_right
+
+# Input:
+#       1
+#      / \
+#     2   5
+#    / \    \
+#   3   4    6
+# Output: 1 -> 2 -> 3 -> 4 -> 5 -> 6
+
+root = TreeNode(1, 
+    TreeNode(2, TreeNode(3), TreeNode(4)), 
+    TreeNode(5, None, TreeNode(6)))
+flatten(root)
+
+# Printing the flattened tree
+while root:
+    print(root.val, "->", end=" ")
+    root = root.right
+print("None")  # Output: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> None
+```
+
+---
