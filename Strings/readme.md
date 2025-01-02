@@ -32,6 +32,29 @@ func main() {
 }
 ```
 
+# reverse_string takes a string as input and returns the reversed string
+def reverse_string(s):
+    # Convert the string to a list (to handle character manipulation)
+    chars = list(s)
+    
+    # Use two pointers to swap the characters in place
+    i, j = 0, len(chars) - 1
+    while i < j:
+        chars[i], chars[j] = chars[j], chars[i]
+        i += 1
+        j -= 1
+    
+    # Convert the list back to a string and return it
+    return ''.join(chars)
+
+# main is the entry point for the program
+if __name__ == "__main__":
+    input_string = "hello"
+    reversed_string = reverse_string(input_string)
+    print("Original:", input_string)
+    print("Reversed:", reversed_string)
+
+
 
 ### Find All Anagrams in a String
 
