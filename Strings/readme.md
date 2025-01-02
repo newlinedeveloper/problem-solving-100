@@ -31,7 +31,7 @@ func main() {
 	fmt.Println("Reversed:", reversed)
 }
 ```
-
+```
 # reverse_string takes a string as input and returns the reversed string
 def reverse_string(s):
     # Convert the string to a list (to handle character manipulation)
@@ -54,7 +54,7 @@ if __name__ == "__main__":
     print("Original:", input_string)
     print("Reversed:", reversed_string)
 
-
+```
 
 ### Find All Anagrams in a String
 
