@@ -1,5 +1,119 @@
 ### Stacks and Queues
 
+Let's go through each problem one by one:
+
+---
+
+### 1. Implement Queue using Stacks
+
+#### Problem Description
+Implement a queue using two stacks. The queue should support `push`, `pop`, `peek`, and `empty` operations.
+
+#### Pseudocode
+1. Use two stacks, `stack1` for push operations and `stack2` for pop operations.
+2. For `push`, push the element onto `stack1`.
+3. For `pop`, if `stack2` is empty, transfer all elements from `stack1` to `stack2`. Then pop from `stack2`.
+4. For `peek`, if `stack2` is empty, transfer all elements from `stack1` to `stack2`. Then return the top of `stack2`.
+5. For `empty`, check if both `stack1` and `stack2` are empty.
+
+---
+
+#### Golang Solution
+```go
+type MyQueue struct {
+    stack1 []int
+    stack2 []int
+}
+
+func Constructor() MyQueue {
+    return MyQueue{}
+}
+
+func (this *MyQueue) Push(x int) {
+    this.stack1 = append(this.stack1, x)
+}
+
+func (this *MyQueue) Pop() int {
+    if len(this.stack2) == 0 {
+        for len(this.stack1) > 0 {
+            this.stack2 = append(this.stack2, this.stack1[len(this.stack1)-1])
+            this.stack1 = this.stack1[:len(this.stack1)-1]
+        }
+    }
+    top := this.stack2[len(this.stack2)-1]
+    this.stack2 = this.stack2[:len(this.stack2)-1]
+    return top
+}
+
+func (this *MyQueue) Peek() int {
+    if len(this.stack2) == 0 {
+        for len(this.stack1) > 0 {
+            this.stack2 = append(this.stack2, this.stack1[len(this.stack1)-1])
+            this.stack1 = this.stack1[:len(this.stack1)-1]
+        }
+    }
+    return this.stack2[len(this.stack2)-1]
+}
+
+func (this *MyQueue) Empty() bool {
+    return len(this.stack1) == 0 && len(this.stack2) == 0
+}
+
+func main() {
+    q := Constructor()
+    q.Push(1)
+    q.Push(2)
+    fmt.Println(q.Peek())  // Output: 1
+    fmt.Println(q.Pop())   // Output: 1
+    fmt.Println(q.Empty()) // Output: false
+}
+```
+
+---
+
+#### Python Solution
+```python
+class MyQueue:
+
+    def __init__(self):
+        self.stack1 = []
+        self.stack2 = []
+
+    def push(self, x: int) -> None:
+        self.stack1.append(x)
+
+    def pop(self) -> int:
+        if not self.stack2:
+            while self.stack1:
+                self.stack2.append(self.stack1.pop())
+        return self.stack2.pop()
+
+    def peek(self) -> int:
+        if not self.stack2:
+            while self.stack1:
+                self.stack2.append(self.stack1.pop())
+        return self.stack2[-1]
+
+    def empty(self) -> bool:
+        return not self.stack1 and not self.stack2
+
+# Sample usage
+q = MyQueue()
+q.push(1)
+q.push(2)
+print(q.peek())  # Output: 1
+print(q.pop())   # Output: 1
+print(q.empty()) # Output: False
+```
+
+---
+
+### Explanation
+- `stack1` handles push operations, and `stack2` handles pop operations.
+- Elements are transferred from `stack1` to `stack2` when needed, maintaining the queue order.
+
+---
+
 ### 2. Implement Stack using Queues
 
 #### Problem Description
