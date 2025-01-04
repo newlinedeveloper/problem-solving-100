@@ -468,10 +468,295 @@ func main() {
 
 ```
 
-### Sort Characters By Frequency
+### Problem 1: Sort Characters By Frequency
 
+#### Problem Description:
+Given a string `s`, sort it in decreasing order based on the frequency of the characters. If two characters have the same frequency, their order in the output does not matter.
 
-### Minimum Remove to Make Valid Parentheses
+---
 
+#### Pseudocode:
+1. Create a frequency map to count occurrences of each character.
+2. Convert the map into a list of tuples and sort by frequency in descending order.
+3. Construct the result string by repeating each character based on its frequency.
+4. Return the result.
 
-### Permutation in String
+---
+
+#### Golang Solution:
+
+```go
+package main
+
+import (
+	"fmt"
+	"sort"
+)
+
+func frequencySort(s string) string {
+	// Frequency map
+	freq := make(map[rune]int)
+	for _, ch := range s {
+		freq[ch]++
+	}
+
+	// Create a slice of characters
+	type charFreq struct {
+		char  rune
+		count int
+	}
+	charFreqs := make([]charFreq, 0, len(freq))
+	for ch, count := range freq {
+		charFreqs = append(charFreqs, charFreq{ch, count})
+	}
+
+	// Sort by frequency in descending order
+	sort.Slice(charFreqs, func(i, j int) bool {
+		return charFreqs[i].count > charFreqs[j].count
+	})
+
+	// Build the result
+	result := ""
+	for _, cf := range charFreqs {
+		result += string(cf.char) * cf.count
+	}
+	return result
+}
+
+func main() {
+	fmt.Println(frequencySort("tree"))       // Output: "eert"
+	fmt.Println(frequencySort("cccaaa"))    // Output: "cccaaa" or "aaaccc"
+	fmt.Println(frequencySort("Aabb"))      // Output: "bbAa"
+}
+```
+
+---
+
+#### Python Solution:
+
+```python
+from collections import Counter
+
+def frequencySort(s: str) -> str:
+    # Frequency map
+    freq = Counter(s)
+    
+    # Sort characters by frequency in descending order
+    sorted_chars = sorted(freq.items(), key=lambda x: -x[1])
+    
+    # Build the result string
+    result = ''.join(char * count for char, count in sorted_chars)
+    return result
+
+# Test cases
+print(frequencySort("tree"))    # Output: "eert"
+print(frequencySort("cccaaa"))  # Output: "cccaaa" or "aaaccc"
+print(frequencySort("Aabb"))    # Output: "bbAa"
+```
+
+---
+
+### Problem 2: Minimum Remove to Make Valid Parentheses
+
+#### Problem Description:
+Given a string `s` containing only `(`, `)`, and lowercase English characters, remove the minimum number of parentheses to make the string valid.
+
+---
+
+#### Pseudocode:
+1. Use a stack to track indices of unmatched `(`.
+2. Traverse the string:
+   - If `(`, push its index onto the stack.
+   - If `)`, pop the stack if it's not empty; otherwise, mark it for removal.
+3. Combine the stack with other marked indices.
+4. Construct the result string excluding marked indices.
+
+---
+
+#### Golang Solution:
+
+```go
+package main
+
+import (
+	"fmt"
+)
+
+func minRemoveToMakeValid(s string) string {
+	stack := []int{}
+	toRemove := make(map[int]bool)
+
+	// Traverse to find unmatched parentheses
+	for i, ch := range s {
+		if ch == '(' {
+			stack = append(stack, i)
+		} else if ch == ')' {
+			if len(stack) > 0 {
+				stack = stack[:len(stack)-1]
+			} else {
+				toRemove[i] = true
+			}
+		}
+	}
+
+	// Mark remaining '(' in the stack
+	for _, index := range stack {
+		toRemove[index] = true
+	}
+
+	// Build the result string
+	result := ""
+	for i, ch := range s {
+		if !toRemove[i] {
+			result += string(ch)
+		}
+	}
+	return result
+}
+
+func main() {
+	fmt.Println(minRemoveToMakeValid("lee(t(c)o)de)")) // Output: "lee(t(c)o)de"
+	fmt.Println(minRemoveToMakeValid("a)b(c)d"))       // Output: "ab(c)d"
+	fmt.Println(minRemoveToMakeValid("))(("))          // Output: ""
+}
+```
+
+---
+
+#### Python Solution:
+
+```python
+def minRemoveToMakeValid(s: str) -> str:
+    stack = []
+    to_remove = set()
+
+    # Traverse to find unmatched parentheses
+    for i, char in enumerate(s):
+        if char == '(':
+            stack.append(i)
+        elif char == ')':
+            if stack:
+                stack.pop()
+            else:
+                to_remove.add(i)
+
+    # Add remaining '(' in the stack to removal set
+    to_remove.update(stack)
+
+    # Build the result string
+    result = ''.join(char for i, char in enumerate(s) if i not in to_remove)
+    return result
+
+# Test cases
+print(minRemoveToMakeValid("lee(t(c)o)de)"))  # Output: "lee(t(c)o)de"
+print(minRemoveToMakeValid("a)b(c)d"))        # Output: "ab(c)d"
+print(minRemoveToMakeValid("))(("))           # Output: ""
+```
+
+---
+
+### Problem 3: Permutation in String
+
+#### Problem Description:
+Given two strings `s1` and `s2`, return `true` if `s2` contains a permutation of `s1`.
+
+---
+
+#### Pseudocode:
+1. Create a frequency map for `s1`.
+2. Use a sliding window of length equal to `s1` on `s2`.
+3. For each window:
+   - Update the frequency map for the characters in the window.
+   - Check if the maps match.
+4. Return `true` if any window matches the map.
+
+---
+
+#### Golang Solution:
+
+```go
+package main
+
+import (
+	"fmt"
+)
+
+func checkInclusion(s1 string, s2 string) bool {
+	if len(s1) > len(s2) {
+		return false
+	}
+
+	count1 := make(map[byte]int)
+	count2 := make(map[byte]int)
+
+	// Initialize count1 for s1
+	for i := range s1 {
+		count1[s1[i]]++
+	}
+
+	// Sliding window
+	for i := range s2 {
+		count2[s2[i]]++
+
+		// Maintain window size
+		if i >= len(s1) {
+			count2[s2[i-len(s1)]]--
+			if count2[s2[i-len(s1)]] == 0 {
+				delete(count2, s2[i-len(s1)])
+			}
+		}
+
+		// Compare maps
+		if len(count1) == len(count2) {
+			match := true
+			for k, v := range count1 {
+				if count2[k] != v {
+					match = false
+					break
+				}
+			}
+			if match {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+func main() {
+	fmt.Println(checkInclusion("ab", "eidbaooo")) // Output: true
+	fmt.Println(checkInclusion("ab", "eidboaoo")) // Output: false
+}
+```
+
+---
+
+#### Python Solution:
+
+```python
+from collections import Counter
+
+def checkInclusion(s1: str, s2: str) -> bool:
+    if len(s1) > len(s2):
+        return False
+
+    count1 = Counter(s1)
+    count2 = Counter(s2[:len(s1)])
+
+    # Sliding window
+    for i in range(len(s1), len(s2)):
+        if count1 == count2:
+            return True
+        count2[s2[i]] += 1
+        count2[s2[i - len(s1)]] -= 1
+        if count2[s2[i - len(s1)]] == 0:
+            del count2[s2[i - len(s1)]]
+
+    return count1 == count2
+
+# Test cases
+print(checkInclusion("ab", "eidbaooo"))  # Output: true
+print(checkInclusion("ab", "eidboaoo"))  # Output: false
+```
+
+--- 
